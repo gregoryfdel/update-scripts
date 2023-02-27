@@ -59,20 +59,29 @@ This `update.sh` script is inside the git cloned repo without any other stuff
 
 ```bash
 #!/bin/bash
+# Check if the file has been modified
+if [[ $(git status --porcelain update.sh) ]]; then
+  # Add the file to the staging area
+  git add update.sh
+  
+  # Commit the changes
+  git commit --no-verify -m "Automatic commit of update.sh"
+  echo "update.sh was updated and automatically committed"
+else
+  # Do nothing
+  echo "update.sh has not been modified"
+fi
 rm package-lock.json
-git diff --exit-code update.sh
-status=$?
-[ $status -eq 0 ] && echo "update.sh up to date" || (echo "Adding update commit for update.sh" && git add update.sh && git commit -m "updated update.sh")
 git restore .
-git pull
-rm package-lock.json
-python -c "from pathlib import Path; import json; pkgj = Path('package.json').read_text(); pkgus = json.loads(pkgj); pkgus['scripts']['make-linux'] = 'yarn electron-packager . webcord --platform=linux --overwrite'; pkgw = json.dumps(pkgus, indent=2); Path('package.json').write_text(pkgw)"
-yarn 
-yarn add electron-packager
-npm install
+git reset
+git clean -fd
+git reset
+git restore .
+git pull --rebase origin master
 npm ci
-npm update
-npm run make-linux
+npm install
+npm install --save-dev electron-packager
+npm run make
 ```
 
 ### Freetube
@@ -80,18 +89,25 @@ This `update.sh` script is inside the git cloned repo without any other stuff
 
 ```bash
 #!/bin/bash
-git diff --exit-code update.sh
-status=$?
-[ $status -eq 0 ] && echo "update.sh up to date" || (echo "Adding update commit for update.sh" && git add update.sh && git commit -m "updated update.sh")
+# Check if the file has been modified
+if [[ $(git status --porcelain update.sh) ]]; then
+  # Add the file to the staging area
+  git add update.sh
+  
+  # Commit the changes
+  git commit --no-verify -m "Automatic commit of update.sh"
+  echo "update.sh was updated and automatically committed"
+else
+  # Do nothing
+  echo "update.sh has not been modified"
+fi
 git restore .
-git pull
+git reset
+git clean -fd
+git reset
+git restore .
 python -c "from pathlib import Path; import json; pkgj = Path('package.json').read_text(); pkgus = json.loads(pkgj); pkgus['scripts']['make-linux'] = 'yarn electron-packager . freetube --platform=linux --overwrite'; pkgw = json.dumps(pkgus, indent=2); Path('package.json').write_text(pkgw)"
 yarn clean
 yarn 
-yarn add electron-packager
-npm run rebuild:electron
-npm run pack:main
-npm run pack:renderer
-npm run pack:workers
-npm run make-linux
+yarn run build
 ```
