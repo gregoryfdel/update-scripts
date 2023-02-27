@@ -108,7 +108,11 @@ git reset
 git restore .
 python -c "from pathlib import Path; import json; pkgj = Path('package.json').read_text(); pkgus = json.loads(pkgj); pkgus['scripts']['make-linux'] = 'yarn electron-packager . freetube --platform=linux --overwrite'; pkgw = json.dumps(pkgus, indent=2); Path('package.json').write_text(pkgw)"
 yarn clean
-yarn 
-yarn run build
+yarn
+yarn add electron-packager
+yarn run ci
+yarn run rebuild:electron
+yarn run pack
+yarn run pack:web
 yarn run make-linux
 ```
