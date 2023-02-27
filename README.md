@@ -110,4 +110,5 @@ python -c "from pathlib import Path; import json; pkgj = Path('package.json').re
 yarn clean
 yarn 
 yarn run build
+yarn run make-linux
 ```
